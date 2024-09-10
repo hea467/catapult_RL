@@ -6,7 +6,7 @@ import torch
 import multiprocessing
 from multiprocessing import Process, Queue, Manager
 import mujoco
-from walker_specific_env import Cube_Block_Env
+from catapult_env import Cube_Block_Env
 
 def parallel_episode(env_id, env, max_ep_len, sac_agent, return_dict):
     state = env.reset()

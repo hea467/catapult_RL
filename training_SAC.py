@@ -13,7 +13,7 @@ import concurrent.futures
 import mujoco
 import wandb
 
-from walker_specific_env import Cube_Block_Env
+from catapult_env import Catapult_Env
 
 hp_dict = {
             "exp_name"          : "Linear_End_Effector_Shift",
@@ -77,9 +77,9 @@ print_freq = max_ep_len * update_freq
 num_threads = 128
 act_scale_f = 1
 
-env = Cube_Block_Env(max_ep_len, num_threads)
+env = [Catapult_Env(max_ep_len) for i in range(max_ep_len)]
 logger_kwargs = {}
-single_agent_env_dict = {'action_space': {'low': -0.25/act_scale_f, 'high': 0.25/act_scale_f, 'dim': 4},
+single_agent_env_dict = {'action_space': {'low': -0.5, 'high': 0.5, 'dim': 4},
                     'observation_space': {'dim': 65},}
 
 sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
@@ -95,31 +95,29 @@ wandb.init(
     }
 )
 
+def convert_act_to_timestep(action, max_ep_length): 
+    return (action +0.5) * max_ep_length
+
+
 def parallel_episode(max_ep_len, thread_id):
+    #Initialize 
     all_data_this_episode = []
-    # all_data_this_episode = {}
-    state = env.reset(thread_id)
-    
+    state = env[thread_id].reset()
+    #Get action: which time step to release 
+    action = sac_agent.get_actions(state)
+    timestep_to_release = convert_act_to_timestep(action, max_ep_len)
+    assert(timestep_to_release <= max_ep_len and timestep_to_release >= 0)
     for t in range(max_ep_len):
-        # if time_step < 33: 
-        #     action = np.array([0, 0, 0, 0])
-        # else:
-        action = sac_agent.get_actions(state)
-        # action = np.clip(action, 0, 0.5)
-        new_state, reward, done = env.step(action, thread_id)
-        # print([state,  *action, reward, new_state, done])
+        release_bool = (timestep_to_release <= t)
+        new_state, reward, done = env[thread_id].step(release_bool)
         data_this_step = {"state" : state, "action": action, "reward" : reward, "new_state": new_state, "done": done}
-        #all_data_this_episode[t] = np.array([state,  *action, reward, new_state, done])
         all_data_this_episode.append(data_this_step)
         state = new_state 
         if done:
             break
-    #shoould be like 10, uncpmment later when things are running
-    # print(len(all_data_this_episode))
-    # result = all_data_this_episode.items()
-    # data = np.array(list(result))
     return np.array(all_data_this_episode)
     
+
 def thread_initializer():
     thread_local.data = mujoco.MjData(env.model)
     
@@ -146,8 +144,6 @@ while time_step <= max_training_timesteps:
                 sac_agent.replay_buffer.store(step_data["state"], step_data["action"], step_data["reward"], step_data["new_state"], step_data["done"])
                 time_step += 1
                 episode_steps_count += 1
-                # if step_data["done"]:
-                #     break
             last_step = episode_data[-1]
             episode_reward = last_step["reward"]
             writer.add_scalar('train/avg_reward', episode_reward, global_step=time_step)

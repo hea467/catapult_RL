@@ -45,13 +45,14 @@
             <joint name="v9_j2" pos="0 0 0" axis="0 1 0" type="slide" />
             <joint name="v9_j3" pos="0 0 0" axis="0 0 1" type="slide"/>
         </body> -->
-        <body name="v10" pos="0.0 0.2 0.085">
-            <inertial pos="0 0 0" mass="0.001" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
-            <joint name="v10_j1" pos="0 0 0" axis="1 0 0" type="slide" damping = "1"/>
-            <joint name="v10_j2" pos="0 0 0" axis="0 1 0" type="slide" damping = "1"/>
-            <joint name="v10_j3" pos="0 0 0" axis="0 0 1" type="slide" damping = "1"/>
+        <!-- 0.0 0.2 0.085 -->
+        <body name="v10" pos="0.0 0.212 0.132">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v10_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+            <joint name="v10_j2" pos="0 0 0" axis="0 1 0" type="slide" />
+            <joint name="v10_j3" pos="0 0 0" axis="0 0 1" type="slide" />
         </body>
-        <body name="ball" pos="0.0 0.18  0.10600000000000001">
+        <body name="ball" pos="0.0 0.205 0.134">
 			<freejoint name = "ball"/>
 			<geom name="ball" type="sphere" size="0.01" rgba="0 1 0 1" mass = "0.00005" friction = "3 0.005 0.0001"/>
 		</body>
@@ -95,6 +96,6 @@
 
     <actuator>
         <position name="v3_actx" joint="v3_j1" kp="200" dampratio="1" ctrlrange="-0.05 0.3" />
-        <position name="v3_actz" joint="v3_j3" kp="10" dampratio="1" ctrlrange="-0.05 0.3" />
+        <!-- <position name="v3_actz" joint="v3_j3" kp="10" dampratio="1" ctrlrange="-0.05 0.3" /> -->
     </actuator>
 </mujoco>
