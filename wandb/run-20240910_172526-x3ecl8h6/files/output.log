@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/tiffany/Desktop/catapult_RL/training_SAC.py", line 143, in <module>
+    episode_data = future.result()
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/tiffany/Desktop/catapult_RL/training_SAC.py", line 107, in parallel_episode
+    state = env[thread_id].reset()
+IndexError: list index out of range

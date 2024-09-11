@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/tiffany/Desktop/catapult_RL/training_SAC_height.py", line 179, in <module>
+    wandb.log({'train/avg_reward': last_rew, 'train/num_episodes' : ep_length})
+NameError: name 'last_rew' is not defined

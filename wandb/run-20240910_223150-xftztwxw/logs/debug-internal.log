@@ -1,0 +1,90 @@
+2024-09-10 22:31:50,023 INFO    StreamThr :2137283 [internal.py:wandb_internal():85] W&B internal server running at pid: 2137283, started at: 2024-09-10 22:31:50.022741
+2024-09-10 22:31:50,028 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: status
+2024-09-10 22:31:50,031 INFO    WriterThread:2137283 [datastore.py:open_for_write():87] open: /home/tiffany/Desktop/catapult_RL/wandb/run-20240910_223150-xftztwxw/run-xftztwxw.wandb
+2024-09-10 22:31:50,032 DEBUG   SenderThread:2137283 [sender.py:send():391] send: header
+2024-09-10 22:31:50,033 DEBUG   SenderThread:2137283 [sender.py:send():391] send: run
+2024-09-10 22:31:55,031 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:00,033 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:05,033 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:10,035 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:15,036 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:20,037 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:25,038 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:30,041 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:35,042 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:40,042 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:45,044 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:50,045 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:32:53,625 INFO    SenderThread:2137283 [retry.py:__call__():172] Retry attempt failed:
+Traceback (most recent call last):
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connection.py", line 196, in _new_conn
+    sock = connection.create_connection(
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connection.py", line 615, in connect
+    self.sock = sock = self._new_conn()
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connection.py", line 205, in _new_conn
+    raise ConnectTimeoutError(
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x79ebc1d934c0>, 'Connection to api.wandb.ai timed out. (connect timeout=20)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x79ebc1d934c0>, 'Connection to api.wandb.ai timed out. (connect timeout=20)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/wandb/sdk/lib/retry.py", line 131, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/wandb/sdk/internal/internal_api.py", line 345, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/wandb/sdk/lib/gql_request.py", line 58, in execute
+    request = self.session.post(self.url, **post_args)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/site-packages/requests/adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x79ebc1d934c0>, 'Connection to api.wandb.ai timed out. (connect timeout=20)'))
+2024-09-10 22:32:55,046 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:33:00,047 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:33:05,048 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:33:10,049 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:33:15,051 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: keepalive
+2024-09-10 22:33:20,052 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: cancel
+2024-09-10 22:33:20,052 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: cancel
+2024-09-10 22:33:20,052 DEBUG   SenderThread:2137283 [sender.py:send():400] Record cancelled: run
+2024-09-10 22:33:20,053 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: status_report
+2024-09-10 22:33:22,069 DEBUG   HandlerThread:2137283 [handler.py:handle_request():158] handle_request: shutdown
+2024-09-10 22:33:22,069 INFO    HandlerThread:2137283 [handler.py:finish():880] shutting down handler
+2024-09-10 22:33:23,053 INFO    SenderThread:2137283 [sender.py:finish():1631] shutting down sender
+2024-09-10 22:33:23,054 INFO    WriterThread:2137283 [datastore.py:close():296] close: /home/tiffany/Desktop/catapult_RL/wandb/run-20240910_223150-xftztwxw/run-xftztwxw.wandb

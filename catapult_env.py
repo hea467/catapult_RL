@@ -16,7 +16,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         action_space = {"range": (-0.5, 0.5), "shape" : (1,)}
         xml_path = "assets/catapult.xml"
         # Let's start with just the y coordinate
-        goal = 1
+        goal = -0.5
         
         super().__init__(episode_len, xml_path, action_space, goal)
       
@@ -31,12 +31,6 @@ class Catapult_Env(Origami_Mujoco_Env):
         #Keep track of how many steps each of the threads took
         self.local_thread_steps = 0
 
-        #for storing output graphs
-        self.stored_trajectory = {}
-        self.stored_trajectory_num = 0
-        
-        
-        
         
     def _step_mujoco_simulation(self, release_bool, frame_skip):
         """
@@ -45,13 +39,13 @@ class Catapult_Env(Origami_Mujoco_Env):
         #ONLY do sth if we are releasing, right? 
         if release_bool: 
             self.data.ctrl = 0.25
-            self.data.ctrl = np.clip(self.data.ctrl, 0, 0.5)
-            mujoco.mj_step(self.model, self.data, nstep=frame_skip)
+            # self.data.ctrl = np.clip(self.data.ctrl, 0, 0.5)
+        mujoco.mj_step(self.model, self.data, nstep=frame_skip)
 
-            # As of MuJoCo 2.0, force-related quantities like cacc are not computed
-            # unless there's a force sensor in the model.
-            # See https://github.com/openai/gym/issues/1541
-            mujoco.mj_rnePostConstraint(self.model, self.data)
+        # As of MuJoCo 2.0, force-related quantities like cacc are not computed
+        # unless there's a force sensor in the model.
+        # See https://github.com/openai/gym/issues/1541
+        mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def reset_goal(): 
         pass
@@ -75,23 +69,32 @@ class Catapult_Env(Origami_Mujoco_Env):
             self.local_thread_steps = 0
         return observation, reward, done
     
-    def reward(self, obs, ctrl):
-        end_effector_pos = np.array([obs[3*20], obs[3*20 + 2]])
-        euclid_dist = np.linalg.norm(end_effector_pos[0:2] - self.goal)
-        rew = -100*(euclid_dist + (self.local_thread_steps)/5000)
-        pos_ctrl_motivation = 0
-        for c in ctrl: 
-            if c < 0.05:
-                pos_ctrl_motivation -= 1
-        done = False 
-        if euclid_dist < 0.02:
-            done = True
-        return (rew + pos_ctrl_motivation), done
+    def reward(self, obs):
+        #If it flew further than we r done
+        if obs[1] <= self.goal and obs[2] > 0.02:
+            return 1, True
+        #If not, return a linear thingy depending on how far away it is.
+        else: 
+            euclid_dist = np.linalg.norm(obs[1] - self.goal)
+            return -10*euclid_dist, False
+        return 100*obs[2], False
+    
+    # def reward(self, obs, ctrl):
+
+    #     euclid_dist = np.linalg.norm(obs[1] - self.goal)
+    #     done = False 
+    #     if euclid_dist < 0.02:
+    #         done = True
+    #     return (100*euclid_dist), done
         
     def _get_obs(self):
         result = []
+        # If sarvesh is reading this: I don't care 
         result.append(self.data.body(f'ball').xpos[0])
-        goal = list(self.goal)
-        result = obs + goal
-        #print(f"observed loc {[result[60], result[62]]}, actual: {self.data[thread_id].body(f'v21').xpos}")
+        result.append(self.data.body(f'ball').xpos[1])
+        result.append(self.data.body(f'ball').xpos[2])
+        #It works
+        result.append(self.goal)
+        #print(f"observed loc {[result[60], result[62]]}, actual: {self.data[thread_id].body(f'v21').xpos}")\
+        # print(result)
         return np.array(result)

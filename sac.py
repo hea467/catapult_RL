@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.optim import Adam
 import time
-import attention_core as core
+import core as core
 import torch.nn as nn
 import wandb
 # from utils.openai_utils.logx import EpochLogger
