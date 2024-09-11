@@ -125,7 +125,7 @@ class SAC:
             
         return pi_loss.item()
 
-    def update(self, batch_size, current_episode):
+    def update(self, batch_size, current_episode, name):
         data = self.replay_buffer.sample_batch(batch_size)
         # print("******************************", data)
         # First run one gradient descent step for Q.
@@ -145,8 +145,8 @@ class SAC:
                 p_targ.data.add_(self.hp_dict['tau'] * p.data)
         # After updating the main network, sync the CPU copy
         self.ac_cpu.load_state_dict(self.ac.state_dict())
-        if (current_episode % 1000) == 0:  
-            torch.save(self.ac.state_dict(), f"SAC_agent_saved/model.pt")
+        if (current_episode % 10) == 0:  
+            torch.save(self.ac.state_dict(), f"SAC_agent_saved/model_{name}.pt")
         return q_loss, pi_loss
 
     def get_actions(self, o, deterministic=False):

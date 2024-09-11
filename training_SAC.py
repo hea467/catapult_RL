@@ -21,7 +21,7 @@ hp_dict = {
     "data_dir": "./data/rl_data",
     "tau": 0.005,
     "gamma": 0.99,
-    "q_lr": 3e-4,
+    "q_lr": 3e-5,
     "pi_lr": 1e-5,
     "eta_min": 1e-5,
     "alpha": 0.1,  # Changed from 0.2 to a slightly lower value
@@ -142,6 +142,7 @@ def save_list(data, filename):
 thread_local = threading.local()
 
 # training loop
+rounds_of_num_thread_ep_completed = 0
 #I'm getting rid of the concept here of time step and instead just tracking episode
 while ep_count <= max_training_eps:
     current_ep_reward = 0
@@ -176,12 +177,12 @@ while ep_count <= max_training_eps:
             ep_length = episode_data["ep_steps"]
             wandb.log({'train/avg_reward': last_rew, 'train/num_episodes' : episode_data["ep_steps"]})
     
-
+    rounds_of_num_thread_ep_completed += 1
     q_losses = np.zeros(num_threads)
     pi_losses = np.zeros(num_threads)
     if ep_count>hp_dict["batch_size"]:
         for i in range(num_threads):
-            q_losses[i], pi_losses[i] = sac_agent.update(hp_dict["batch_size"], ep_count)
+            q_losses[i], pi_losses[i] = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "dist_exp")
         
     wandb.log({'train/q_loss': np.mean(q_losses), 'train/pi_loss' : np.mean(pi_losses)})
     # writer.add_scalar('train/avg_reward', current_ep_reward/curr_ep_tsteps, global_step=env.global_step)

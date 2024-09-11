@@ -1,0 +1,1 @@
+{"train/avg_reward": 244.40197587613739, "train/num_episodes": 499, "_timestamp": 1726073635.069206, "_runtime": 371.3938810825348, "_step": 7655, "train/q_loss": 1295824.216796875, "train/pi_loss": -240.0202832221985, "_wandb": {"runtime": 372}}

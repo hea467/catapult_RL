@@ -1,0 +1,85 @@
+
+finished episode 100, last recorded reward: 671.8511553865513, last action : 68
+finished episode 200, last recorded reward: 1366.7440018031825, last action : 16
+finished episode 300, last recorded reward: 2015.6719273457074, last action : 27
+finished episode 400, last recorded reward: 671.8511553865513, last action : 86
+finished episode 500, last recorded reward: 671.8511553865513, last action : 97
+finished episode 600, last recorded reward: 1706.3663819905255, last action : 22
+finished episode 700, last recorded reward: 3066.178417805794, last action : 59
+finished episode 800, last recorded reward: 671.8511553865513, last action : 99
+finished episode 900, last recorded reward: 2171.067482038863, last action : 33
+finished episode 1000, last recorded reward: 1823.7859548508277, last action : 25
+finished episode 1100, last recorded reward: 671.8511553865513, last action : 84
+finished episode 1200, last recorded reward: 671.8511553865513, last action : 81
+finished episode 1300, last recorded reward: 3576.0933071606796, last action : 57
+finished episode 1400, last recorded reward: 1690.513732845791, last action : 19
+finished episode 1500, last recorded reward: 671.8511553865513, last action : 92
+finished episode 1600, last recorded reward: 1510.9041232070524, last action : 17
+finished episode 1700, last recorded reward: 743.7149316104513, last action : 8
+finished episode 1800, last recorded reward: 2177.5102940064166, last action : 29
+finished episode 1900, last recorded reward: 743.7149316104513, last action : 8
+finished episode 2000, last recorded reward: 345.7233422383473, last action : 5
+finished episode 2100, last recorded reward: 416.92819613621765, last action : 6
+finished episode 2200, last recorded reward: 244.40197587613739, last action : 0
+finished episode 2300, last recorded reward: 262.5628764325534, last action : 1
+finished episode 2400, last recorded reward: 496.87148049614524, last action : 2
+finished episode 2500, last recorded reward: 584.4225018637936, last action : 7
+finished episode 2600, last recorded reward: 262.5628764325534, last action : 1
+finished episode 2700, last recorded reward: 345.7233422383473, last action : 5
+finished episode 2800, last recorded reward: 262.5628764325534, last action : 1
+finished episode 2900, last recorded reward: 262.5628764325534, last action : 1
+finished episode 3000, last recorded reward: 244.40197587613739, last action : 0
+finished episode 3100, last recorded reward: 496.87148049614524, last action : 2
+finished episode 3200, last recorded reward: 244.40197587613739, last action : 0
+finished episode 3300, last recorded reward: 244.40197587613739, last action : 0
+finished episode 3400, last recorded reward: 496.87148049614524, last action : 2
+finished episode 3500, last recorded reward: 496.87148049614524, last action : 2
+finished episode 3600, last recorded reward: 496.87148049614524, last action : 2
+finished episode 3700, last recorded reward: 262.5628764325534, last action : 1
+finished episode 3800, last recorded reward: 244.40197587613739, last action : 0
+finished episode 3900, last recorded reward: 244.40197587613739, last action : 0
+finished episode 4000, last recorded reward: 244.40197587613739, last action : 0
+finished episode 4100, last recorded reward: 262.5628764325534, last action : 1
+finished episode 4200, last recorded reward: 496.87148049614524, last action : 2
+finished episode 4300, last recorded reward: 262.5628764325534, last action : 1
+finished episode 4400, last recorded reward: 262.5628764325534, last action : 1
+finished episode 4500, last recorded reward: 262.5628764325534, last action : 1
+finished episode 4600, last recorded reward: 262.5628764325534, last action : 1
+finished episode 4700, last recorded reward: 244.40197587613739, last action : 0
+finished episode 4800, last recorded reward: 244.40197587613739, last action : 0
+finished episode 4900, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5000, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5100, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5200, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5300, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5400, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5500, last recorded reward: 262.5628764325534, last action : 1
+finished episode 5600, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5700, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5800, last recorded reward: 244.40197587613739, last action : 0
+finished episode 5900, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6000, last recorded reward: 262.5628764325534, last action : 1
+finished episode 6100, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6200, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6300, last recorded reward: 262.5628764325534, last action : 1
+finished episode 6400, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6500, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6600, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6700, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6800, last recorded reward: 244.40197587613739, last action : 0
+finished episode 6900, last recorded reward: 244.40197587613739, last action : 0
+finished episode 7000, last recorded reward: 244.40197587613739, last action : 0
+finished episode 7100, last recorded reward: 244.40197587613739, last action : 0
+finished episode 7200, last recorded reward: 244.40197587613739, last action : 0
+finished episode 7300, last recorded reward: 244.40197587613739, last action : 0
+finished episode 7400, last recorded reward: 244.40197587613739, last action : 0
+Traceback (most recent call last):
+  File "/home/tiffany/Desktop/catapult_RL/training_SAC_height.py", line 159, in <module>
+    for i, future in enumerate(concurrent.futures.as_completed(futures)):
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/concurrent/futures/_base.py", line 245, in as_completed
+    waiter.event.wait(wait_timeout)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/threading.py", line 607, in wait
+    signaled = self._cond.wait(timeout)
+  File "/home/tiffany/miniconda3/envs/py310/lib/python3.10/threading.py", line 320, in wait
+    waiter.acquire()
+KeyboardInterrupt

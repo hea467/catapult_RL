@@ -87,8 +87,6 @@ visualize = Visualize(model, data)
 frame_skip = 10
 max_ep_len = 500
 
-sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
-sac_agent.load_saved_policy("SAC_agent_saved/model.pt")
 
 
 def convert_act_to_timestep(action, max_ep_length): 
@@ -98,7 +96,9 @@ def convert_act_to_timestep(action, max_ep_length):
 def convert_timestep_to_act(tp, max_ep_length): 
     return ((tp / 1000) - 0.5)
 
-def inference():
+def inference_height():
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_height_exp.pt")
     start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2], 0.5]
     action = sac_agent.get_actions(start, deterministic=True)
     release_time = convert_act_to_timestep(action[0], 100)
@@ -112,5 +112,20 @@ def inference():
         visualize.render()
     mujoco.mj_resetData(model, data)
 
+def inference_dist():
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_dist_exp.pt")
+    start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2], 0.5]
+    action = sac_agent.get_actions(start, deterministic=True)
+    release_time = convert_act_to_timestep(action[0], 500)
+    for i in range(max_ep_len):
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        visualize.render()
+        if i == release_time: 
+            data.ctrl[0] = 0.25
+        # time_until_next_step = model.opt.timestep - (time.time() - step_start)
+        # if     time.sleep(time_until_next_step)
+        visualize.render()
+    mujoco.mj_resetData(model, data)
 
-inference()
+inference_height()

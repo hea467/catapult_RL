@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/tiffany/Desktop/catapult_RL/training_SAC_height.py", line 187, in <module>
+    q_losses[i], pi_losses[i] = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "height_exp")
+ValueError: too many values to unpack (expected 2)

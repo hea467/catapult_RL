@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import sac 
+import sac_mod as sac
 from gymnasium.spaces import Box
 import numpy as np
 from scipy.optimize import minimize
@@ -22,13 +22,13 @@ hp_dict = {
             "tau"               : 0.005,
             "gamma"             : 0.99,
             "q_lr"              : 3e-4,
-            "pi_lr"             : 1e-5,
+            "pi_lr"             : 1e-4,
             "eta_min"           : 1e-5,
             "alpha"             : 0.2,
-            "replay_size"       : 50000000,
+            "replay_size"       : 10000,
             'seed'              : 69420,
             'optim'             : 'adam',
-            "batch_size"        : 32,
+            "batch_size"        : 256,
             "exploration_cutoff": 512,
             "infer_every"       : 4000,
             "inference_length"  : 10,
@@ -39,7 +39,7 @@ hp_dict = {
             "num_heads"         : 8,
             "dim_ff"            : 128,
             "dropout"           : 0,
-            "max_grad_norm"     : 1.0,
+            "max_grad_norm"     : 5.0,
             "dont_log"          : True,
             "exp_num"           : 2
         }
@@ -82,31 +82,34 @@ print_freq = max_ep_len * update_freq
 num_threads = 32
 act_scale_f = 1
 
+log_to_wandb = False
+
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}
-single_agent_env_dict = {'action_space': {'low': -0.5, 'high': 0.5, 'dim': 1},
+single_agent_env_dict = {'action_space': {'low': -1, 'high': 1, 'dim': 1},
                     'observation_space': {'dim': 4},}
 
 sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
 
 episode_records = []
 
-wandb.init(
-    project="Catapult",
-    name = "height_exp_0",
-    config = {
-        "gamma"             : 0.99,
-        "q_lr"              : 3e-4,
-        "pi_lr"             : 1e-5,
-    }
-)
+if log_to_wandb:
+    wandb.init(
+        project="Catapult",
+        name = "height_exp_lower_lrq2",
+        config = {
+            "gamma"             : 0.99,
+            "q_lr"              : 3e-5,
+            "pi_lr"             : 1e-5,
+        }
+    )
 
-def convert_act_to_timestep(action, max_sample_step): 
-    return round((action + 0.5) * max_sample_step)
+def convert_act_to_timestep(action): 
+    return round((action + 1)*50)
 
 
-def convert_timestep_to_act(tp, max_sample_step): 
-    return ((tp / max_sample_step) - 0.5)
+# def convert_timestep_to_act(tp, max_sample_step): 
+#     return ((tp / max_sample_step) - 0.5)
 
 
 def parallel_episode(max_ep_len, thread_id):
@@ -116,7 +119,7 @@ def parallel_episode(max_ep_len, thread_id):
     #Get action: which time step to release 
     action = sac_agent.get_actions(state)
     #Action is an np array with only one element in it
-    timestep_to_release = convert_act_to_timestep(action[0], 100)
+    timestep_to_release = convert_act_to_timestep(action[0])
     ep_rew = 0
     assert(timestep_to_release <= max_ep_len and timestep_to_release >= 0)
     data_this_step = None
@@ -143,6 +146,7 @@ def save_list(data, filename):
 thread_local = threading.local()
 
 # training loop
+rounds_of_num_thread_ep_completed = 0
 #I'm getting rid of the concept here of time step and instead just tracking episode
 while ep_count <= max_training_eps:
     current_ep_reward = 0
@@ -165,27 +169,28 @@ while ep_count <= max_training_eps:
             last_rew = episode_data["reward"]
             if (ep_count % printing_freq) == 0:
                 last_act = episode_data["action"][0]
-                last_timestep = convert_act_to_timestep(last_act, 100)
+                last_timestep = convert_act_to_timestep(last_act)
                 print(f"finished episode {ep_count}, last recorded reward: {last_rew}, last action : {last_timestep}")
 
             if (ep_count % visual_freq) == 0:
                 last_act = episode_data["action"][0]
-                last_timestep = convert_act_to_timestep(last_act, 100)
+                last_timestep = convert_act_to_timestep(last_act)
                 episode_records.append(last_timestep)
                 if (ep_count % pickle_update_freq) == 0:
                     save_list(episode_records, pickle_file_path)
 
             ep_length = episode_data["ep_steps"]
-            wandb.log({'train/avg_reward': last_rew, 'train/num_episodes' : ep_length})
+            if log_to_wandb:
+                wandb.log({'train/avg_reward': last_rew, 'train/num_episodes' : ep_length})
     
-
+    rounds_of_num_thread_ep_completed += 1
     q_losses = np.zeros(num_threads)
     pi_losses = np.zeros(num_threads)
     if ep_count>hp_dict["batch_size"]:
         for i in range(num_threads):
-            q_losses[i], pi_losses[i] = sac_agent.update(hp_dict["batch_size"], ep_count)
-        
-    wandb.log({'train/q_loss': np.mean(q_losses), 'train/pi_loss' : np.mean(pi_losses)})
+            q_losses[i], pi_losses[i], alpha_loss, alpha = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "height_exp")
+    if log_to_wandb:
+        wandb.log({'train/q_loss': np.mean(q_losses), 'train/pi_loss' : np.mean(pi_losses)})
     # writer.add_scalar('train/avg_reward', current_ep_reward/curr_ep_tsteps, global_step=env.global_step)
     # writer.add_scalar('train/num_episodes', curr_ep_tsteps, global_step=env.global_step)
 
