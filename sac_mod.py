@@ -33,7 +33,7 @@ class SAC:
         
         
         self.target_entropy = -self.env_dict['action_space']['dim']
-        self.log_alpha = torch.zeros(1, requires_grad=True, device=self.device)
+        self.log_alpha = torch.tensor([-1.6094], requires_grad=True, device=self.device)
         self.alpha = self.log_alpha.exp()
         self.alpha_optimizer = Adam([self.log_alpha], lr=hp_dict['pi_lr'])
 
@@ -77,13 +77,13 @@ class SAC:
         with torch.no_grad():
             # q_pi_targ = self.ac_targ.q(o2, self.ac_targ.pi(o2))
             # backup = r + gamma * (1 - d) * q_pi_targ
-            a2, logp_a2 = self.ac.pi(o2)
+            a2, logp_a2, mu, std = self.ac.pi(o2)
             # Target Q-values
             q1_pi_targ = self.ac_targ.q1(o2, a2)
             q2_pi_targ = self.ac_targ.q2(o2, a2)
             q_pi_targ = torch.min(q1_pi_targ, q2_pi_targ)
             # print(q_pi_targ.size(), logp_a2.size())
-            backup = r + self.hp_dict['gamma'] * (1 - d) * (q_pi_targ - self.hp_dict['alpha'] * logp_a2)
+            backup = r + self.hp_dict['gamma'] * (1 - d) * (q_pi_targ - self.alpha.detach() * logp_a2)
         
         # MSE loss against Bellman backup
         loss_q1 = ((q1 - backup)**2).mean()
@@ -108,7 +108,7 @@ class SAC:
 
         o = data['obs'].to(self.device)
         o = torch.reshape(o, (self.batch_size, -1,))
-        pi, logp_pi = self.ac.pi(o)
+        pi, logp_pi, mu, std = self.ac.pi(o)
         q1_pi = self.ac.q1(o, pi)
         q2_pi = self.ac.q2(o, pi)
         q_pi = torch.min(q1_pi, q2_pi)
@@ -121,7 +121,7 @@ class SAC:
         self.pi_optimizer.step()
 
         if not self.hp_dict["dont_log"]:
-            wandb.log({"Pi loss": pi_loss.cpu().detach().numpy()})
+            wandb.log({"Pi loss": pi_loss.cpu().detach().numpy(), "log_pi": logp_pi.mean().cpu().detach().numpy(), "mu": mu.cpu().detach().numpy(), "std": std.cpu().detach().numpy()})
         
         for p in self.q_params:
             p.requires_grad = True
@@ -140,8 +140,8 @@ class SAC:
         pi_loss, logp_pi = self.compute_pi_loss(data)
 
         # Update alpha
-        alpha_loss = -(self.log_alpha * (logp_pi + self.target_entropy).detach()).mean()
         self.alpha_optimizer.zero_grad()
+        alpha_loss = -(self.log_alpha * (logp_pi + self.target_entropy).detach()).mean()
         alpha_loss.backward()
         self.alpha_optimizer.step()
         self.alpha = self.log_alpha.exp()

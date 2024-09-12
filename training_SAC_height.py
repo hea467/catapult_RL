@@ -82,7 +82,7 @@ print_freq = max_ep_len * update_freq
 num_threads = 32
 act_scale_f = 1
 
-log_to_wandb = False
+log_to_wandb = True
 
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}

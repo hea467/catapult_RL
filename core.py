@@ -89,5 +89,5 @@ class MLPActorCritic(nn.Module):
     def act(self, obs, deterministic=False):
         with torch.no_grad():
             a, _, mu, std = self.pi(obs, deterministic, False)
-            print(f"mean: {mu}, std: {std}")
+            # print(f"mean: {mu}, std: {std}")
             return a.detach().cpu().numpy()

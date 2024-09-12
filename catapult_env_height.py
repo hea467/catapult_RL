@@ -71,7 +71,7 @@ class Catapult_Env(Origami_Mujoco_Env):
     
     def reward(self, obs):
         #If it flew further than we r done
-        return 100*obs[2], False
+        return obs[2], False
     
     # def reward(self, obs, ctrl):
 
