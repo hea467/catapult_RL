@@ -61,7 +61,7 @@ hp_dict = {
     "exploration_cutoff": 5000,
     "infer_every": 4000,
     "inference_length": 10,
-    "dev_rl": torch.device("cuda:0"),
+    "dev_rl": 'cuda' if torch.cuda.is_available() else 'cpu',
     "model_dim": 64,
     "num_layers": 2,
     "dropout": 0,

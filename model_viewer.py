@@ -52,7 +52,7 @@ def load_or_create_list(filename):
         return []
     
 
-model = mujoco.MjModel.from_xml_path("assets/catapult.xml")
+model = mujoco.MjModel.from_xml_path("assets/catapult_goal.xml")
 data = mujoco.MjData(model)
 pickle_file_path = "saved_episodes/log.pkl"
 visualize = Visualize(model, data)
@@ -61,19 +61,32 @@ max_ep_len = 500
 
 timesteps_of_release = load_or_create_list(pickle_file_path)[24:]
 
+# def view_episode():
+#     # start = time.time()
+#     # step_start = time.time()
+#     for release_time in timesteps_of_release:
+#         for i in range(max_ep_len):
+#             mujoco.mj_step(model, data, nstep=frame_skip)
+#             visualize.render()
+#             if i > release_time: 
+#                 data.ctrl[0] = 0.25
+#             # time_until_next_step = model.opt.timestep - (time.time() - step_start)
+#             # if     time.sleep(time_until_next_step)
+#             visualize.render()
+#         mujoco.mj_resetData(model, data)
+
 def view_episode():
     # start = time.time()
     # step_start = time.time()
-    for release_time in timesteps_of_release:
-        for i in range(max_ep_len):
-            mujoco.mj_step(model, data, nstep=frame_skip)
-            visualize.render()
-            if i > release_time: 
-                data.ctrl[0] = 0.25
-            # time_until_next_step = model.opt.timestep - (time.time() - step_start)
-            # if     time.sleep(time_until_next_step)
-            visualize.render()
-        mujoco.mj_resetData(model, data)
-
+    
+    for i in range(max_ep_len):
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        visualize.render()
+        if i > 50: 
+            data.ctrl[0] = 0.25
+        # time_until_next_step = model.opt.timestep - (time.time() - step_start)
+        # if     time.sleep(time_until_next_step)
+        visualize.render()
+    mujoco.mj_resetData(model, data)
 
 view_episode()

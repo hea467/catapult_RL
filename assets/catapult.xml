@@ -11,12 +11,12 @@
         </body>
         <body name="v2" pos="0.06 0.02 0.10500000000000001">
             <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
-            <joint name="v2_j1" pos="0 0 0" axis="1 0 0" type="slide"/>
+            <joint name="v2_j1" pos="0 0 0" axis="1 0 0" type="slide" />
         </body>
         <body name="v3" pos="0.08 -0.04 0.10500000000000001">
             <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
             <joint name="v3_j1" pos="0 0 0" axis="1 0 0" type="slide" />
-            <joint name="v3_j3" pos="0 0 0" axis="0 0 1" type="slide" limited = "true" range= "0 0.5"/>
+            <joint name="v3_j3" pos="0 0 0" axis="0 0 1" type="slide" limited="true" range="0 0.5" />
         </body>
         <body name="v4" pos="0.06 -0.1 0.10500000000000001">
             <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
@@ -53,9 +53,10 @@
             <joint name="v10_j3" pos="0 0 0" axis="0 0 1" type="slide" />
         </body>
         <body name="ball" pos="0.0 0.205 0.134">
-			<freejoint name = "ball"/>
-			<geom name="ball" type="sphere" size="0.01" rgba="0 1 0 1" mass = "0.00005" friction = "3 0.005 0.0001"/>
-		</body>
+            <freejoint name="ball" />
+            <geom name="ball" type="sphere" size="0.01" rgba="0 1 0 1" mass="0.00005"
+                friction="3 0.005 0.0001" />
+        </body>
     </worldbody>
     <deformable>
         <flex name="body1" dim="2" body="v1 v2 v4 v5" vertex="0 0 0 0 0 0 0 0 0 0 0 0"
