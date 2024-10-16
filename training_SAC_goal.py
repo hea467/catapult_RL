@@ -176,7 +176,7 @@ while ep_count <= max_training_eps:
     pi_losses = np.zeros(num_threads)
     if ep_count>hp_dict["batch_size"]:
         for i in range(num_threads):
-            q_losses[i], pi_losses[i], alpha_loss, alpha = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "height_exp")
+            q_losses[i], pi_losses[i], alpha_loss, alpha = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "goal_exp")
     if log_to_wandb:
         wandb.log({'train/q_loss': np.mean(q_losses), 'train/pi_loss' : np.mean(pi_losses)})
     # writer.add_scalar('train/avg_reward', current_ep_reward/curr_ep_tsteps, global_step=env.global_step)

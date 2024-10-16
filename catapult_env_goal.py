@@ -14,7 +14,7 @@ class Catapult_Env(Origami_Mujoco_Env):
     
     def __init__(self, episode_len):
         action_space = {"range": (-0.25, 0.25), "shape" : (1,)}
-        xml_path = "assets/catapult_goal.xml"
+        xml_path = "assets/catapult_updated.xml"
         # Let's start with just the y coordinate
 
         
