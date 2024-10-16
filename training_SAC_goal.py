@@ -96,7 +96,7 @@ episode_records = []
 if log_to_wandb:
     wandb.init(
         project="Catapult",
-        name = "height_exp_lower_lrq2",
+        name = "ctrl_diff_goal_throw",
         config = {
             "gamma"             : 0.99,
             "q_lr"              : 3e-5,
