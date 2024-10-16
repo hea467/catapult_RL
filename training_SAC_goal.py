@@ -33,8 +33,8 @@ hp_dict = {
             "infer_every"       : 4000,
             "inference_length"  : 10,
             # "dev_sim"           : torch.device(f"cuda:{self.args.dev_sim}"),
-            # "dev_rl"            : torch.device("cuda:0"),
-            "dev_rl"            : torch.device("cpu"),
+            "dev_rl"            : torch.device("cuda:0"),
+            # "dev_rl"            : torch.device("cpu"),
             "model_dim"         : 256,
             "num_heads"         : 8,
             "dim_ff"            : 128,
@@ -82,7 +82,7 @@ print_freq = max_ep_len * update_freq
 num_threads = 32
 act_scale_f = 1
 
-log_to_wandb = False
+log_to_wandb = True
 
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}
