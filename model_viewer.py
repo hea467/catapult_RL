@@ -83,7 +83,7 @@ def view_episode():
         mujoco.mj_step(model, data, nstep=frame_skip)
         visualize.render()
         if i > 1: 
-            data.ctrl[0] = 0.15
+            data.ctrl[0] = 0.181
         # time_until_next_step = model.opt.timestep - (time.time() - step_start)
         # if     time.sleep(time_until_next_step)
         visualize.render()

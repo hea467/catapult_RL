@@ -69,8 +69,8 @@ hp_dict = {
     "dont_log": True,
     "exp_num": 2
 }
-single_agent_env_dict = {'action_space': {'low': -0.5, 'high': 0.5, 'dim': 1},
-                    'observation_space': {'dim': 4},}
+single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 1},
+                    'observation_space': {'dim': 3},}
 logger_kwargs = {}
 
 def load_or_create_list(filename):
@@ -81,7 +81,7 @@ def load_or_create_list(filename):
         return []
     
 
-model = mujoco.MjModel.from_xml_path("assets/catapult.xml")
+model = mujoco.MjModel.from_xml_path("assets/catapult_updated.xml")
 data = mujoco.MjData(model)
 visualize = Visualize(model, data)
 frame_skip = 10
@@ -128,4 +128,17 @@ def inference_dist():
         visualize.render()
     mujoco.mj_resetData(model, data)
 
-inference_height()
+def inference_goal():
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_height_exp.pt")
+    start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]]
+    action = sac_agent.get_actions(start, deterministic=True)
+    for i in range(max_ep_len):
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        data.ctrl[0] = action
+        # time_until_next_step = model.opt.timestep - (time.time() - step_start)
+        # if     time.sleep(time_until_next_step)
+        visualize.render()
+    mujoco.mj_resetData(model, data)
+
+inference_goal()
