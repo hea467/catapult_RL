@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import sac_mod as sac
+import sac as sac
 from gymnasium.spaces import Box
 import numpy as np
 from scipy.optimize import minimize
