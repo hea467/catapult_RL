@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import sac_mod as sac
+import sac as sac
 from gymnasium.spaces import Box
 import numpy as np
 from scipy.optimize import minimize
@@ -82,7 +82,7 @@ print_freq = max_ep_len * update_freq
 num_threads = 32
 act_scale_f = 1
 
-log_to_wandb = True
+log_to_wandb = False
 
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}
@@ -136,6 +136,7 @@ def save_list(data, filename):
     
 thread_local = threading.local()
 
+print(f"print nextwork device: {sac_agent.device}")
 # training loop
 rounds_of_num_thread_ep_completed = 0
 #I'm getting rid of the concept here of time step and instead just tracking episode
