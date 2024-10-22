@@ -36,8 +36,8 @@ class SAC:
         else:
             self.ac = core.MLPActorCritic(self.obs_dim, self.act_dim, self.act_limit)
 
-        # self.ac_cpu = deepcopy(self.ac)  # Create a CPU copy
-        # self.ac_targ = deepcopy(self.ac)
+        self.ac_cpu = deepcopy(self.ac)  # Create a CPU copy
+        self.ac_targ = deepcopy(self.ac)
 
         self.ac = self.ac.to(self.device)  # Move main network to GPU
         self.ac_targ = self.ac_targ.to(self.device)  # Move target network to GPU
@@ -144,34 +144,30 @@ class SAC:
                 p_targ.data.mul_(1 - self.hp_dict['tau'])
                 p_targ.data.add_(self.hp_dict['tau'] * p.data)
         # After updating the main network, sync the CPU copy
-        # self.ac_cpu.load_state_dict(self.ac.state_dict())
+        self.ac_cpu.load_state_dict(self.ac.state_dict())
         if (current_episode % 10) == 0:  
             torch.save(self.ac.state_dict(), f"SAC_agent_saved/model_{name}.pt")
         return q_loss, pi_loss
 
-    @torch.inference_mode()
     def get_actions(self, o, deterministic=False):
         """ Let's try to see if we can do away with the to device for this function specifically while keeping all updates et al on GPU. """
         # obs = torch.tensor(o, dtype=torch.float32).to(self.device)
-        # obs = torch.tensor(o, dtype=torch.float32)
-        # obs = torch.reshape(obs, (1, -1))
-        # obs = obs.view(obs, (1, -1))
+        obs = torch.tensor(o, dtype=torch.float32)
+        obs = torch.reshape(obs, (1, -1))
         # return self.ac.act(torch.as_tensor(obs, dtype=torch.float32), deterministic).reshape((-1,))
-        # with torch.no_grad():
-            # return self.ac_cpu.act(obs, deterministic).reshape((-1,))
-        self.obs_tensor.copy_(torch.as_tensor(o, dtype=torch.float32))
-        return self.ac.act(self.obs_tensor, deterministic).cpu().numpy().reshape(-1)
+        with torch.no_grad():
+            return self.ac_cpu.act(obs, deterministic).reshape((-1,))
 
     def load_saved_policy(self, path):
         state_dict = torch.load(path, map_location=self.device)
         self.ac.load_state_dict(torch.load(path, map_location=self.device))
         # self.ac.to(device)
-        # self.ac_cpu.load_state_dict(state_dict)  # Also update the CPU copy
+        self.ac_cpu.load_state_dict(state_dict)  # Also update the CPU copy
 
     def test_policy(self, o):
         with torch.no_grad():
-            a = self.ac.act(torch.as_tensor(o, dtype=torch.float32), True) # Generate deterministic policies
-            # a = self.ac_cpu.act(torch.as_tensor(o, dtype=torch.float32), True) #Uses CPU copy for testing
+            # a = self.ac.act(torch.as_tensor(o, dtype=torch.float32), True) # Generate deterministic policies
+            a = self.ac_cpu.act(torch.as_tensor(o, dtype=torch.float32), True) #Uses CPU copy for testing
         return np.clip(a, -self.act_limit, self.act_limit)
         
         

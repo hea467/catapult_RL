@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import sac as sac
+import sac_mod as sac
 from gymnasium.spaces import Box
 import numpy as np
 from scipy.optimize import minimize
@@ -68,7 +68,7 @@ completed_circles = 0
 max_ep_len = 500
 update_freq = 10
 # max_training_timesteps = max_ep_len * 3000000
-max_training_eps = 30000
+max_training_eps = 70000
 # max_training_timesteps = 2e6
 
 printing_freq = 100
@@ -82,7 +82,7 @@ print_freq = max_ep_len * update_freq
 num_threads = 32
 act_scale_f = 1
 
-log_to_wandb = False
+log_to_wandb = True
 
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}
@@ -114,9 +114,12 @@ def parallel_episode(max_ep_len, thread_id):
     # action = sac_agent.get_actions(state)
     #Action is an np array with only one element in it
     ep_rew = 0
+    act_freq = 20
     data_this_step = None
+    action = sac_agent.get_actions(state)
     for t in range(max_ep_len):
-        action = sac_agent.get_actions(state)
+        if t % act_freq == 0: 
+            action = sac_agent.get_actions(state)
         new_state, reward, done = env[thread_id].step(action)
         ep_rew = reward
         #reset the data always to the latest step
