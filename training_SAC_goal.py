@@ -110,11 +110,13 @@ def parallel_episode(max_ep_len, thread_id):
     state = env[thread_id].reset()
     init_state = state.copy()
     #Get action: which time step to release 
-    action = sac_agent.get_actions(state)
+    #UNCOMMENT IFFF we want to repeat this action for all tsteps
+    # action = sac_agent.get_actions(state)
     #Action is an np array with only one element in it
     ep_rew = 0
     data_this_step = None
     for t in range(max_ep_len):
+        action = sac_agent.get_actions(state)
         new_state, reward, done = env[thread_id].step(action)
         ep_rew = reward
         #reset the data always to the latest step

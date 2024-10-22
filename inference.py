@@ -130,15 +130,15 @@ def inference_dist():
 
 def inference_goal():
     sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
-    sac_agent.load_saved_policy("SAC_agent_saved/model_height_exp.pt")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_goal_exp.pt")
     start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]]
     action = sac_agent.get_actions(start, deterministic=True)
     for i in range(max_ep_len):
         mujoco.mj_step(model, data, nstep=frame_skip)
         data.ctrl[0] = action
-        # time_until_next_step = model.opt.timestep - (time.time() - step_start)
-        # if     time.sleep(time_until_next_step)
         visualize.render()
     mujoco.mj_resetData(model, data)
 
+def inference_goal_time():
+    # The RL decides the time to throw as well
 inference_goal()
