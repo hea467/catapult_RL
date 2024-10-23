@@ -19,12 +19,8 @@ class Origami_Mujoco_Env():
         # self.goal = goal
         # print("Init qpos: -----", self.init_qpos)
         
-    def reset(self):
-        mujoco.mj_resetData(self.model, self.data)
-        return self._get_obs()
     
-    def _get_obs(self) :
-        pass
+
 
 
 
