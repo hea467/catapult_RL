@@ -141,6 +141,14 @@ def inference_goal():
 
 def inference_goal_time():
     # The RL decides the time to throw as well
-    pass 
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_goal_exp_with_time.pt")
+    start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]]
+    action = sac_agent.get_actions(start, deterministic=True)
+    for i in range(max_ep_len):
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        data.ctrl[0] = action
+        visualize.render()
+    mujoco.mj_resetData(model, data)
 
-inference_goal()
+inference_goal_time()
