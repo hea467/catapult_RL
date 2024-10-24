@@ -1,0 +1,123 @@
+<mujoco model="valley_fold">
+    <include file="scene.xml" />
+    <extension>
+        <plugin plugin="mujoco.elasticity.solid" />
+    </extension>
+    <worldbody>
+        <body name="v1" pos="0.0 0.01088 0.10039">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v1_j1" pos="0 0 0" axis="0 0 1" type="slide" limited="true"
+                range="-0.35 0.2" />
+        </body>
+        <body name="v2" pos="0.06 0.01753 0.13887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v2_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+        </body>
+        <body name="v3" pos="0.08 -0.03443 0.10887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v3_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+            <joint name="v3_j3" pos="0 0 0" axis="0 0 1" type="slide" limited="true" range="0 0.5" />
+        </body>
+        <body name="v4" pos="0.06 -0.08639 0.07887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v4_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+        </body>
+        <body name="v5" pos="0.0 -0.05407 0.06289">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v5_j1" pos="0 0 0" axis="0 0 1" type="slide" limited="true"
+                range="-0.35 0.2" />
+        </body>
+        <body name="v6" pos="-0.06 0.01753 0.13887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v6_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+        </body>
+        <body name="v7" pos="-0.08 -0.03443 0.10887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v7_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+        </body>
+        <body name="v8" pos="-0.06 -0.08639 0.07887">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v8_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+        </body>
+        <body name="v10" pos="0.0 -0.15024 0.23946">
+            <inertial pos="0 0 0" mass="0.01" diaginertia="1.66667e-05 1.66667e-05 1.66667e-05" />
+            <joint name="v10_j1" pos="0 0 0" axis="1 0 0" type="slide" />
+            <joint name="v10_j2" pos="0 0 0" axis="0 1 0" type="slide" />
+            <joint name="v10_j3" pos="0 0 0" axis="0 0 1" type="slide" />
+        </body>
+        <body name="ball" pos="0.0 -0.14 0.23946">
+            <freejoint name="ball" />
+            <geom name="ball" type="sphere" size="0.01" rgba="0 0 1 1" mass="0.005"
+                friction="1 0.005 0.0001" />
+        </body>
+        <body name="target_bot" pos="0 0.45 0.01">
+            <!-- the center of the box is at 0 0.45 -->
+            <geom name="bot_box" type="box" size="0.05 0.05 0.01" rgba="0.258 0.529 0.96 1" />
+
+            <body name="target_side1" pos="0.0 -0.06 0.01">
+                <geom name="s1_box" type="box" size="0.05 0.01 0.02" rgba="0.54 0.807 0.878 1" />
+            </body>
+
+            <body name="target_side2" pos="0.0 0.06 0.01">
+                <geom name="s2_box" type="box" size="0.05 0.01 0.02" rgba="0.54 0.807 0.878 1" />
+            </body>
+
+            <body name="target_side3" pos="0.06 0 0.01">
+                <geom name="s3_box" type="box" size="0.01 0.05 0.02" rgba="0.54 0.807 0.878 1" />
+            </body>
+
+            <body name="target_side4" pos="-0.06 0 0.01">
+                <geom name="s4_box" type="box" size="0.01 0.05 0.02" rgba="0.54 0.807 0.878 1" />
+            </body>
+        </body>
+        <body name="target_bot2" pos="0 0.32 0.01">
+        <!-- the center of the second box is at 0 0.32 -->
+            <geom name="bot_box2" type="box" size="0.05 0.05 0.01" rgba="1 0.4 0.4 1" /> <!-- Soft red bottom -->
+
+            <body name="target_side1_2" pos="0.0 -0.06 0.01">
+                <geom name="s1_box2" type="box" size="0.05 0.01 0.02" rgba="1 0.75 0.8 1" /> 
+            </body>
+
+            <body name="target_side2_2" pos="0.0 0.06 0.01">
+                <geom name="s2_box2" type="box" size="0.05 0.01 0.02" rgba="1 0.75 0.8 1" /> 
+            </body>
+
+            <body name="target_side3_2" pos="0.06 0 0.01">
+                <geom name="s3_box2" type="box" size="0.01 0.05 0.02" rgba="1 0.75 0.8 1" />
+            </body>
+
+            <body name="target_side4_2" pos="-0.06 0 0.01">
+                <geom name="s4_box2" type="box" size="0.01 0.05 0.02" rgba="1 0.75 0.8 1" /> 
+            </body>
+        </body>
+
+    </worldbody>
+    <deformable>
+        <flex name="body1" dim="2" body="v1 v2 v4 v5" vertex="0 0 0 0 0 0 0 0 0 0 0 0"
+            element="0 1 2 2 3 0" rgba="1 0 0 0.9" />
+        <flex name="body2" dim="2" body="v2 v3 v4" vertex="0 0 0 0 0 0 0 0 0" element="0 1 2"
+            rgba="0 0 1 0.9" />
+        <flex name="body5" dim="2" body="v6 v7 v8" vertex="0 0 0 0 0 0 0 0 0" element="0 1 2"
+            rgba="0 0 1 0.9" />
+        <flex name="body6" dim="2" body="v1 v6 v8 v5" vertex="0 0 0 0 0 0 0 0 0 0 0 0"
+            element="0 1 2 2 3 0" rgba="1 0 0 0.9" />
+        <flex name="body7" dim="2" body="v1 v6 v10" vertex="0 0 0 0 0 0 0 0 0" element="0 1 2"
+            rgba="1 0 0 0.9" />
+        <flex name="body8" dim="2" body="v1 v10 v2" vertex="0 0 0 0 0 0 0 0 0" element="0 1 2"
+            rgba="1 0 0 0.9" />
+    </deformable>
+
+    <equality>
+        <flex flex="body1" />
+        <flex flex="body2" />
+        <flex flex="body5" />
+        <flex flex="body6" />
+        <flex flex="body7" />
+        <flex flex="body8" />
+        <joint joint1="v3_j1" joint2="v7_j1" polycoef="0 -1 0 0 0" />
+    </equality>
+
+    <actuator>
+        <position name="v3_actx" joint="v3_j1" kp="200" dampratio="1" ctrlrange="-0.05 0.3" />
+    </actuator>
+</mujoco>

@@ -11,12 +11,12 @@ import pickle
 
 # os.path.abspath("assets/ball_balance.xml")
 class Visualize:
-    def __init__(self, model, data, lookat=np.array((0.3, 0, 0.4)), distance=1, elevation=-20, azimuth=120):
+    def __init__(self, model, data, lookat=np.array((0.3, 0, 0.4)), distance=1, elevation=-50, azimuth=120):
         self.model, self.data = model, data
         self.gui_lock = Lock()
-        self.setup_gui(lookat=np.array((0.3, 0, 0.4)), distance=2, elevation=-20, azimuth=120)
+        self.setup_gui(lookat=np.array((0.3, 0, 0.4)), distance=2, elevation=-50, azimuth=120)
     
-    def setup_gui(self,lookat=np.array((0.3, 0, 0.4)), distance=2, elevation=-20, azimuth=120):
+    def setup_gui(self,lookat=np.array((0.3, 0, 0.4)), distance=2, elevation=-50, azimuth=120):
         width, height = 1920, 1080
 
         glfw.init()
@@ -70,7 +70,7 @@ hp_dict = {
     "exp_num": 2
 }
 single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 1},
-                    'observation_space': {'dim': 3},}
+                    'observation_space': {'dim': 5},}
 logger_kwargs = {}
 
 def load_or_create_list(filename):
@@ -81,11 +81,12 @@ def load_or_create_list(filename):
         return []
     
 
-model = mujoco.MjModel.from_xml_path("assets/catapult_updated.xml")
+# model = mujoco.MjModel.from_xml_path("assets/catapult_updated.xml")
+model = mujoco.MjModel.from_xml_path("assets/catapult_two_goals.xml")
 data = mujoco.MjData(model)
 visualize = Visualize(model, data)
 frame_skip = 10
-max_ep_len = 500
+max_ep_len = 200
 
 
 
@@ -145,10 +146,51 @@ def inference_goal_time():
     sac_agent.load_saved_policy("SAC_agent_saved/model_goal_exp_with_time.pt")
     start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]]
     action = sac_agent.get_actions(start, deterministic=True)
+    act_feq= 20
     for i in range(max_ep_len):
         mujoco.mj_step(model, data, nstep=frame_skip)
+        if i % act_feq == 0:
+            state = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]]
+            action = sac_agent.get_actions(state, deterministic=True)
         data.ctrl[0] = action
         visualize.render()
     mujoco.mj_resetData(model, data)
 
-inference_goal_time()
+def is_in_box(x, y, target):
+        """
+        Check if the ball is in the specified box.
+        """
+        if target == "box1":
+            return -0.05 <= x <= 0.05 and 0.4 <= y <= 0.5
+        elif target == "box2":
+            return -0.05 <= x <= 0.05 and 0.3 <= y <= 0.35
+        return False
+
+def inference_two_goals_time(box):
+    # The RL decides the time to throw as well
+    centers_for_goals ={"box1": [0, 0.45], "box2":[0, 0.32]}
+    center = None 
+    if box == 1:
+        center = centers_for_goals["box1"]
+    else:
+        center = centers_for_goals["box2"]
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_two_goal_exp.pt")
+    start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]] + center
+
+    action = sac_agent.get_actions(start, deterministic=True)
+    act_feq= 20
+    for i in range(max_ep_len):
+        # print(is_in_box(data.body('ball').xpos[0], data.body('ball').xpos[1], "box2"))
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        # if i % act_feq == 0:
+        #     state = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]] + center
+        #     print(state)
+        #     action = sac_agent.get_actions(state, deterministic=True)
+        data.ctrl[0] = action
+        visualize.render()
+    
+    mujoco.mj_resetData(model, data)
+
+inference_two_goals_time(1)
+# inference_goal_time()
