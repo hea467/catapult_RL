@@ -6,22 +6,22 @@ import torch
 import multiprocessing
 from multiprocessing import Process, Queue, Manager
 import mujoco
-from catapult_env import Cube_Block_Env
+from sth_env import RL_env
 
 def parallel_episode(env_id, env, max_ep_len, sac_agent, return_dict):
-    state = env.reset()
+    # Code to run parallel episodes
+    state = env.reset() 
     all_data_this_episode = []
     
     for t in range(max_ep_len):
         action = sac_agent.get_actions(state)
-        new_state, reward, done = env.step(action)
-        data_this_step = {"state": state, "action": action, "reward": reward, "new_state": new_state, "done": done}
-        print("MATATA")
-        all_data_this_episode.append(data_this_step)
-        state = new_state 
-        if done:
-            break
-    
+        # new_state, reward, done = env.step(action)
+        # data_this_step = {"state": state, "action": action, "reward": reward, "new_state": new_state, "done": done}
+        # all_data_this_episode.append(data_this_step)
+        # state = new_state 
+        # if done:
+        #     break
+    # put necessary data in return dict
     return_dict[env_id] = np.array(all_data_this_episode)
     
 if __name__ == '__main__':
@@ -64,14 +64,9 @@ if __name__ == '__main__':
     time_step = 0
     i_episode = 0
 
-    # action_std_decay_freq = 0.05 
-    # min_action_std = 0.1
-
     max_ep_len = 100
     update_freq = 10
     max_training_timesteps = max_ep_len * 3000000
-    # max_training_timesteps = max_ep_len * 30000
-    # max_training_timesteps = 2e6
 
     episode_storage_frequency = 0
 
@@ -79,15 +74,7 @@ if __name__ == '__main__':
 
     print_freq = max_ep_len * update_freq
     act_scale_f = 1
-    # wandb.init(
-    #     project="Origami RL",
-    #     name = "exp_0",
-    #     config = {
-    #         "gamma"             : 0.99,
-    #         "q_lr"              : 3e-3,
-    #         "pi_lr"             : 1e-4,
-    #     }
-    # )
+
 
     logger_kwargs = {}
     single_agent_env_dict = {'action_space': {'low': -0.25/act_scale_f, 'high': 0.25/act_scale_f, 'dim': 4},
@@ -96,9 +83,9 @@ if __name__ == '__main__':
 
     #creating an env for every thread / process
     num_processes = 16
-    envs = [Cube_Block_Env(max_ep_len) for i in range(num_processes)]  # Create a single-thread environment for each process
+    envs = [RL_env(max_ep_len) for i in range(num_processes)]  # Create a single-thread environment for each process
 
-    # multiprocessing.set_start_method('spawn')  # Necessary for CUDA compatibility
+    multiprocessing.set_start_method('spawn')  # Necessary for CUDA compatibility
     
     # num_processes = multiprocessing.cpu_count()  # Use all available CPU cores
     print(f"Using {num_processes} processes")

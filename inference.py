@@ -192,5 +192,5 @@ def inference_two_goals_time(box):
     
     mujoco.mj_resetData(model, data)
 
-inference_two_goals_time(1)
+inference_two_goals_time(2)
 # inference_goal_time()
