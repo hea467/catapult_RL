@@ -86,7 +86,7 @@ log_to_wandb = True
 
 env = [Catapult_Env(max_ep_len) for i in range(num_threads)]
 logger_kwargs = {}
-single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 1},
+single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 2},
                     'observation_space': {'dim': 5},}
 
 sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
@@ -109,23 +109,25 @@ def parallel_episode(max_ep_len, thread_id):
     #Initialize 
     state = env[thread_id].reset()
     init_state = state.copy()
-    #Get action: which time step to release 
-    #UNCOMMENT IFFF we want to repeat this action for all tsteps
-    # action = sac_agent.get_actions(state)
-    #Action is an np array with only one element in it
     ep_rew = 0
     act_freq = 20
-    data_this_step = None
+    data_this_step= None 
     action = sac_agent.get_actions(state)
+    timestep_to_apply_control = int(action[0]) * max_ep_len
+    force_action = action[1]
     for t in range(max_ep_len):
-        # if t % act_freq == 0: 
-        #     action = sac_agent.get_actions(state)
-        new_state, reward, done, current_goal= env[thread_id].step(action)
-        ep_rew = reward
-        #reset the data always to the latest step
-        state = new_state 
-        if done:
+        if timestep_to_apply_control < 0 :
             break
+        if t == timestep_to_apply_control:  # Apply control only at the chosen timestep
+            new_state, reward, done, current_goal = env[thread_id].step(force_action)
+        elif t < timestep_to_apply_control:
+             new_state, reward, done, current_goal = env[thread_id].step(0) 
+        else:
+            new_state, reward, done, current_goal = env[thread_id].step(force_action)
+        state = new_state
+        ep_rew = reward
+        if done:
+            break 
     data_this_step = {"state" : init_state, "action": action, "reward" : ep_rew, "new_state": state, "done": done, "ep_steps": t, "current_goal" : current_goal}
     return data_this_step
     
@@ -163,17 +165,10 @@ while ep_count <= max_training_eps:
             ep_count += 1
             last_rew = episode_data["reward"]
             if (ep_count % printing_freq) == 0:
-                last_act = episode_data["action"][0]
+                last_act = (int(abs(episode_data["action"][0]) * max_ep_len), abs(episode_data["action"][1]))
                 goal_current = episode_data["current_goal"]
                 done = episode_data["done"]
                 print(f"finished episode {ep_count}, last recorded reward: {last_rew}, last action : {last_act}, done : {done}, goal : {goal_current}")
-
-            # if (ep_count % visual_freq) == 0:
-            #     last_act = episode_data["action"][0]
-            #     last_timestep = convert_act_to_timestep(last_act)
-            #     episode_records.append(last_timestep)
-            #     if (ep_count % pickle_update_freq) == 0:
-            #         save_list(episode_records, pickle_file_path)
 
             ep_length = episode_data["ep_steps"]
             if log_to_wandb:
