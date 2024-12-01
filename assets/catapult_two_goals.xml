@@ -70,8 +70,8 @@
                 <geom name="s4_box" type="box" size="0.01 0.05 0.02" rgba="0.54 0.807 0.878 1" />
             </body>
         </body>
-        <body name="target_bot2" pos="0 0.32 0.01">
-        <!-- the center of the second box is at 0 0.32 -->
+        <!-- <body name="target_bot2" pos="0 0.32 0.01">
+        the center of the second box is at 0 0.32
             <geom name="bot_box2" type="box" size="0.05 0.05 0.01" rgba="1 0.4 0.4 1" /> <!-- Soft red bottom -->
 
             <body name="target_side1_2" pos="0.0 -0.06 0.01">
@@ -89,7 +89,7 @@
             <body name="target_side4_2" pos="-0.06 0 0.01">
                 <geom name="s4_box2" type="box" size="0.01 0.05 0.02" rgba="1 0.75 0.8 1" /> 
             </body>
-        </body>
+        </body> -->
 
     </worldbody>
     <deformable>

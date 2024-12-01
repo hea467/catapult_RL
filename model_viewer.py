@@ -4,6 +4,7 @@ import torch
 import numpy as np
 import os
 import glfw
+import random
 from threading import Lock
 
 import pickle
@@ -78,15 +79,13 @@ timesteps_of_release = load_or_create_list(pickle_file_path)[24:]
 def view_episode():
     # start = time.time()
     # step_start = time.time()
-    time.sleep(2)
-    for i in range(max_ep_len):
-        mujoco.mj_step(model, data, nstep=frame_skip)
-        visualize.render()
-        if i > 1: 
-            data.ctrl[0] = 0.181
-        # time_until_next_step = model.opt.timestep - (time.time() - step_start)
-        # if     time.sleep(time_until_next_step)
-        visualize.render()
-    mujoco.mj_resetData(model, data)
+    # time.sleep(2)
+    for i in range(5):
+        y_cord = np.random.uniform(0.3, 0.5)
+        for i in range(max_ep_len):
+            mujoco.mj_step(model, data, nstep=frame_skip)
+            model.body_pos[model.body("target_bot").id] = [0, y_cord, 0.01]
+            visualize.render()
+        mujoco.mj_resetData(model, data)
 
 view_episode()
