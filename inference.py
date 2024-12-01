@@ -192,5 +192,31 @@ def inference_two_goals_time(box):
     
     mujoco.mj_resetData(model, data)
 
-inference_two_goals_time(2)
-# inference_goal_time()
+
+def inference_multi_goals_time():
+    # The RL decides the time to throw as well
+    y_cord = np.random.uniform(0.3, 0.5)
+    center_for_goal = [0, y_cord]
+    sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
+    sac_agent.load_saved_policy("SAC_agent_saved/model_multi_goal_exp.pt")
+    start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]] + center_for_goal
+    action = sac_agent.get_actions(start, deterministic=True)
+    timestep_to_apply_control = int(action[0]) * max_ep_len
+    force_action = action[1]
+
+    for t in range(max_ep_len):
+        # print(is_in_box(data.body('ball').xpos[0], data.body('ball').xpos[1], "box2"))
+        mujoco.mj_step(model, data, nstep=frame_skip)
+        if timestep_to_apply_control < 0 :
+            print(" Negative predicted timestep: Cannot proceed ")
+        if t == timestep_to_apply_control:  # Apply control only at the chosen timestep
+           data.ctrl[0] = force_action
+        elif t < timestep_to_apply_control:
+            data.ctrl[0] = 0
+        else:
+            data.ctrl[0] = force_action
+        visualize.render()
+    
+    mujoco.mj_resetData(model, data)
+
+inference_multi_goals_time()

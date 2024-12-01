@@ -28,7 +28,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         #Keep track of how many steps each of the threads took
         self.local_thread_steps = 0
         self.current_goal = None  
-        self.centers_for_goals ={"box1": [0, 0.45], "box2":[0, 0.32]}
+        # self.centers_for_goals ={"box1": [0, 0.45], "box2":[0, 0.32]}
 
         #getting initial positions
         self.reset()
@@ -53,7 +53,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         Randomly choose the target goal between the two boxes for this episode.
         """
         # self.current_goal = random.choice(["box1", "box2"])  # randomly choose between two goals
-        self.current_goal = random.choice(["box1", "box2"]) 
+        self.current_goal = [0, np.random.uniform(0.3, 0.5)]
         # print(f"Target goal for this episode: {self.current_goal}")
 
     def step(self, ctrl):
@@ -79,11 +79,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         """
         Check if the ball is in the specified box.
         """
-        if target == "box1":
-            return -0.05 <= x <= 0.05 and 0.4 <= y <= 0.5
-        elif target == "box2":
-            return -0.05 <= x <= 0.05 and 0.27 <= y <= 0.38
-        return False
+        return -0.05 <= x <= 0.05 and target - 0.05 <= y <= target + 0.05
     
     def reward(self, obs):
         x, y = obs[0], obs[1]
@@ -98,10 +94,9 @@ class Catapult_Env(Origami_Mujoco_Env):
         result.append(self.data.body(f'ball').xpos[0])
         result.append(self.data.body(f'ball').xpos[1])
         result.append(self.data.body(f'ball').xpos[2])
-        result += self.centers_for_goals[self.current_goal] # add the centers of the goal
-        # print(f"observed loc {[result[60], result[62]]}, actual: {self.data[thread_id].body(f'v21').xpos}")\
-        # print(result)
+        result += self.current_goal # add the centers of the goal
         return np.array(result)
+    
     def reset(self):
         self.reset_goal()
         mujoco.mj_resetData(self.model, self.data)

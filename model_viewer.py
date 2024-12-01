@@ -53,7 +53,7 @@ def load_or_create_list(filename):
         return []
     
 
-model = mujoco.MjModel.from_xml_path("assets/catapult_updated.xml")
+model = mujoco.MjModel.from_xml_path("assets/catapult_two_goals.xml")
 data = mujoco.MjData(model)
 pickle_file_path = "saved_episodes/log.pkl"
 visualize = Visualize(model, data)

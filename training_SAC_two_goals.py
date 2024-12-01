@@ -79,7 +79,7 @@ pickle_update_freq = 1
 update_timestep = max_ep_len * update_freq
 
 print_freq = max_ep_len * update_freq
-num_threads = 32
+num_threads = 4
 act_scale_f = 1
 
 log_to_wandb = True
@@ -110,7 +110,6 @@ def parallel_episode(max_ep_len, thread_id):
     state = env[thread_id].reset()
     init_state = state.copy()
     ep_rew = 0
-    act_freq = 20
     data_this_step= None 
     action = sac_agent.get_actions(state)
     timestep_to_apply_control = int(action[0]) * max_ep_len
@@ -123,7 +122,8 @@ def parallel_episode(max_ep_len, thread_id):
         elif t < timestep_to_apply_control:
              new_state, reward, done, current_goal = env[thread_id].step(0) 
         else:
-            new_state, reward, done, current_goal = env[thread_id].step(force_action)
+            new_state, reward, done, current_goal = env[thread_id].step(force_action) 
+            #maintain ctrl seems best 
         state = new_state
         ep_rew = reward
         if done:
@@ -179,7 +179,7 @@ while ep_count <= max_training_eps:
     pi_losses = np.zeros(num_threads)
     if ep_count>hp_dict["batch_size"]:
         for i in range(num_threads):
-            q_losses[i], pi_losses[i], alpha_loss, alpha = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "two_goal_exp")
+            q_losses[i], pi_losses[i], alpha_loss, alpha = sac_agent.update(hp_dict["batch_size"], rounds_of_num_thread_ep_completed, "multi_goal_exp")
     if log_to_wandb:
         wandb.log({'train/q_loss': np.mean(q_losses), 'train/pi_loss' : np.mean(pi_losses)})
 
