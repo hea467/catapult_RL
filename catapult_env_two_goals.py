@@ -53,7 +53,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         Randomly choose the target goal between the two boxes for this episode.
         """
         # self.current_goal = random.choice(["box1", "box2"])  # randomly choose between two goals
-        self.current_goal = [0, np.random.uniform(0.3, 0.5)]
+        self.current_goal = [0, np.random.uniform(0.25, 0.6)]
         # print(f"Target goal for this episode: {self.current_goal}")
 
     def step(self, ctrl):

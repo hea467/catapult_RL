@@ -199,12 +199,19 @@ def is_in_box(x, y, target):
         return -0.05 <= x <= 0.05 and target[1] - 0.05 <= y <= target[1] + 0.05
 def inference_multi_goals_time():
     # The RL decides the time to throw as well
-    y_cord = 0.5
+    y_cord = np.random.uniform(0.25, 0.6)
+    # y_cord = 0.5
     center_for_goal = [0, y_cord]
     sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
     sac_agent.load_saved_policy("SAC_agent_saved/model_multi_goal_exp.pt")
     start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]] + center_for_goal
+    color = np.random.rand(4)
+    color[3] = 1
+    color[0] = y_cord
+    color[2] = min(color[0], color[1])
     model.body_pos[model.body("target_bot").id] = center_for_goal + [0.01]
+    geom_id = model.geom("bot_box").id
+    model.geom_rgba[geom_id] = color
     action = sac_agent.get_actions(start, deterministic=True)
     timestep_to_apply_control = int(action[0]) * max_ep_len
     force_action = action[1]
@@ -225,4 +232,5 @@ def inference_multi_goals_time():
     print(success)
     mujoco.mj_resetData(model, data)
 
-inference_multi_goals_time()
+for i in range(5):
+    inference_multi_goals_time()
