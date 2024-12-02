@@ -69,7 +69,7 @@ hp_dict = {
     "dont_log": True,
     "exp_num": 2
 }
-single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 1},
+single_agent_env_dict = {'action_space': {'low': -0.25, 'high': 0.25, 'dim': 2},
                     'observation_space': {'dim': 5},}
 logger_kwargs = {}
 
@@ -192,18 +192,23 @@ def inference_two_goals_time(box):
     
     mujoco.mj_resetData(model, data)
 
-
+def is_in_box(x, y, target):
+        """
+        Check if the ball is in the specified box.
+        """
+        return -0.05 <= x <= 0.05 and target[1] - 0.05 <= y <= target[1] + 0.05
 def inference_multi_goals_time():
     # The RL decides the time to throw as well
-    y_cord = np.random.uniform(0.3, 0.5)
+    y_cord = 0.5
     center_for_goal = [0, y_cord]
     sac_agent = sac.SAC(single_agent_env_dict, hp_dict, logger_kwargs, ma=False, train_or_test="test")
     sac_agent.load_saved_policy("SAC_agent_saved/model_multi_goal_exp.pt")
     start = [data.body('ball').xpos[0], data.body('ball').xpos[1], data.body('ball').xpos[2]] + center_for_goal
+    model.body_pos[model.body("target_bot").id] = center_for_goal + [0.01]
     action = sac_agent.get_actions(start, deterministic=True)
     timestep_to_apply_control = int(action[0]) * max_ep_len
     force_action = action[1]
-
+    print("goal: ", center_for_goal)
     for t in range(max_ep_len):
         # print(is_in_box(data.body('ball').xpos[0], data.body('ball').xpos[1], "box2"))
         mujoco.mj_step(model, data, nstep=frame_skip)
@@ -216,7 +221,8 @@ def inference_multi_goals_time():
         else:
             data.ctrl[0] = force_action
         visualize.render()
-    
+    success = is_in_box(data.body('ball').xpos[0], data.body('ball').xpos[1], center_for_goal)
+    print(success)
     mujoco.mj_resetData(model, data)
 
 inference_multi_goals_time()

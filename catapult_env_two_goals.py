@@ -79,7 +79,7 @@ class Catapult_Env(Origami_Mujoco_Env):
         """
         Check if the ball is in the specified box.
         """
-        return -0.05 <= x <= 0.05 and target - 0.05 <= y <= target + 0.05
+        return -0.05 <= x <= 0.05 and target[1] - 0.05 <= y <= target[1] + 0.05
     
     def reward(self, obs):
         x, y = obs[0], obs[1]
@@ -100,4 +100,5 @@ class Catapult_Env(Origami_Mujoco_Env):
     def reset(self):
         self.reset_goal()
         mujoco.mj_resetData(self.model, self.data)
+        self.model.body_pos[self.model.body("target_bot").id] = self.current_goal + [0.01]
         return self._get_obs()
